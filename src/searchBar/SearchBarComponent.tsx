@@ -2,10 +2,8 @@ import react, { useContext, useState } from "react";
 import _ from "lodash";
 import {
   Grid,
-  Box,
   TextField,
   IconButton,
-  Typography,
   FormControlLabel,
   Switch,
 } from "@mui/material";
@@ -16,6 +14,7 @@ import type { WeatherInfo } from "../Main";
 import countryCodes from "../helpers/countryCode.json";
 import openWeatherQuery from "../helpers/openWeatherQuery";
 import { ErrorContext } from "../ErrorProvider";
+import {SearchBarComponentTextField} from './SearchBarComponentTextField'
 
 interface SearchBarComponentPropsInterface {
   WeatherInfoArr: Array<WeatherInfo>;
@@ -25,8 +24,7 @@ interface SearchBarComponentPropsInterface {
   >;
 }
 
-// const openWeatherApi = 'http://api.openweathermap.org/data/2.5/forecast?id=524901&appid=a47dbbf97c6a91c4ca699a474c295f48'
-
+// Search bar have both country and city textbox to allow user to key the country and the city they want to search.
 export default function SearchBarComponent({
   WeatherInfoArr,
   setWeatherInfoArr,
@@ -41,11 +39,11 @@ export default function SearchBarComponent({
     }
     return "Light";
   };
-  // const [errMsg, setErrMsg] = useState<String>("");
-  // const [errState, setErrState] = useState<Boolean>(false);
+
   const { setErrorMessage, changeErrorState } = useContext(ErrorContext);
 
   const returnErrMsg = (errMsg: string = ""): string => {
+    //return error message, this function can check for error if there is missing city or country name. There is a optional parameter for custom error message.
     if (searchCountry.length === 0 && searchCity.length === 0) {
       return "Both Country and City text field are empty.";
     }
@@ -62,6 +60,7 @@ export default function SearchBarComponent({
   };
 
   const returnCountryCode = (countryName: string): string => {
+    // Translate the country name from the selected search history into country code.
     const translatedCountryCodeIndex = countryCodes.findIndex(
       (countryCode) =>
         countryName.toLocaleLowerCase() === countryCode.name.toLocaleLowerCase()
@@ -80,27 +79,14 @@ export default function SearchBarComponent({
           justifyContent: "center",
           width: "100%",
           marginBottom: "16px",
-          paddingLeft: "34px",
+          paddingLeft: "60px",
         }}
         direction="row"
       >
-        <TextField
+        <SearchBarComponentTextField
           id="country_input"
           label="Country"
           variant="filled"
-          sx={{
-            height: "10%",
-            width: "34%",
-            paddingRight: "8px",
-            input: {
-              color: "white",
-              borderRadius: "10px",
-              backgroundColor: "rgb(0,0,0,0.6)",
-            },
-            label: {
-              color: "white",
-            },
-          }}
           fullWidth
           value={searchCountry}
           onChange={(e) => {
@@ -108,28 +94,12 @@ export default function SearchBarComponent({
             setSearchCountry(searchCountryText);
           }}
         />
-        <TextField
+        <SearchBarComponentTextField
           id="city_input"
           label="City"
           value={searchCity}
           fullWidth
           variant="filled"
-          sx={{
-            height: "10%",
-            width: "34%",
-            paddingRight: "8px",
-            borderStyle: "none",
-
-            color: "white",
-            input: {
-              color: "white",
-              borderRadius: "10px",
-              backgroundColor: "rgb(0,0,0,0.6)",
-            },
-            label: {
-              color: "white",
-            },
-          }}
           color="primary"
           onChange={(e) => {
             const searchCityText = e.target.value;
@@ -145,53 +115,62 @@ export default function SearchBarComponent({
             }}
             onClick={() => {
               if (searchCity.length !== 0 && searchCountry.length !== 0) {
+                // Countrty and city text must have string
                 const countryCode = returnCountryCode(searchCountry);
-                const openWeatherApiQuery = openWeatherQuery(
-                  searchCity,
-                  countryCode
-                );
-                openWeatherApiQuery
-                  .then((result) => {
-                    console.log("result", result);
-                    if (result.cod !== 200) {
-                      const errorMsg = returnErrMsg(result.message);
-                      changeErrorState(true);
-                      setErrorMessage(errorMsg);
-                    } else {
-                      const cityName = result.name;
-                      const countryName = result.sys.country;
+                if (countryCode === "failed") {
+                  // If country code is not found. It will return error.
+                  changeErrorState(true);
+                  setErrorMessage("Unable to find the country");
+                } else {
 
-                      const { description, main } = result.weather[0];
-                      const { temp_min, temp_max, humidity, temp } =
-                        result.main;
+                  const openWeatherApiQuery = openWeatherQuery(
+                    searchCity,
+                    countryCode
+                  );
+                  openWeatherApiQuery
+                    .then((result) => {
+                      if (result.cod !== 200) {
+                        // If the openWeatherApi return error, it will show in error message.
+                        const errorMsg = returnErrMsg(result.message);
+                        changeErrorState(true);
+                        setErrorMessage(errorMsg);
+                      } else {
+                        // If the openWeatherApi have no error, it will poplute the data and return back to the parent component.
+                        const cityName = result.name;
+                        const countryName = result.sys.country;
 
-                      const timeStamp = result.dt;
-                      const updatedWeatherInfo = {
-                        id: _.uniqueId(),
-                        cityName,
-                        countryName,
-                        weather: main,
-                        description,
-                        currentTemp: temp,
-                        temperature: [temp_min, temp_max],
-                        humidity,
-                        time: timeStamp,
-                      };
-                      const updatedWeatherInfoArr = [
-                        ...WeatherInfoArr,
-                        updatedWeatherInfo,
-                      ];
-                      setWeatherInfoArr(updatedWeatherInfoArr);
-                      setSelectedWeatherInfoTableIndex(
-                        updatedWeatherInfoArr.length - 1
-                      );
-                      changeErrorState(false);
-                      setErrorMessage("");
-                    }
-                  })
-                  .catch((err: Error) => {
-                    console.log("err", err);
-                  });
+                        const { description, main } = result.weather[0];
+                        const { temp_min, temp_max, humidity, temp } =
+                          result.main;
+
+                        const timeStamp = result.dt;
+                        const updatedWeatherInfo = {
+                          id: _.uniqueId(),
+                          cityName,
+                          countryName,
+                          weather: main,
+                          description,
+                          currentTemp: temp,
+                          temperature: [temp_min, temp_max],
+                          humidity,
+                          time: timeStamp,
+                        };
+                        const updatedWeatherInfoArr = [
+                          ...WeatherInfoArr,
+                          updatedWeatherInfo,
+                        ];
+                        setWeatherInfoArr(updatedWeatherInfoArr);
+                        setSelectedWeatherInfoTableIndex(
+                          updatedWeatherInfoArr.length - 1
+                        );
+                        changeErrorState(false);
+                        setErrorMessage("");
+                      }
+                    })
+                    .catch((err: Error) => {
+                      console.log("err", err);
+                    });
+                }
               } else {
                 const errorMsg = returnErrMsg();
                 changeErrorState(true);

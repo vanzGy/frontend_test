@@ -33,7 +33,11 @@ export default function Main() {
 
       <SearchBarComponent WeatherInfoArr={weatherInfoTable} setWeatherInfoArr={setWeatherInfoTable} setSelectedWeatherInfoTableIndex={setSelectedWeatherInfoTableIndex}/>
      
-       
+        {
+          /*
+          Show error message if there is an error.
+           */
+        }
         <Box
         sx={{
           display: errState ? "flex" : "none",

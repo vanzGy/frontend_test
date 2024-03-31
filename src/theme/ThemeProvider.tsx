@@ -1,7 +1,6 @@
 import react, {createContext, useState} from 'react';
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
-// import { red } from '@mui/material/colors';
 
+// Toggle the theme in context to allow the children component to receive updated theme
 interface Props {
     children: JSX.Element | JSX.Element[],
 }

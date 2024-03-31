@@ -1,7 +1,7 @@
 import react, {createContext, useState} from 'react';
-// import { ThemeProvider, createTheme } from '@mui/material/styles';
-// import { red } from '@mui/material/colors';
 
+// A global error context to receive error message from children component 
+// and for other children component to receive the message.
 interface Props {
     children: JSX.Element | JSX.Element[],
 }

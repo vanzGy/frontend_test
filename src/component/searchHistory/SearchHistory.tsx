@@ -6,7 +6,6 @@ import {
   TableCell,
   TableRow,
   IconButton,
-  Box,
 } from "@mui/material";
 import type { WeatherInfo } from "../../Main";
 import SearchIcon from "@mui/icons-material/Search";
@@ -43,6 +42,7 @@ export default function SearchHistory({
   };
 
   const returnCountryCode = (countryName: String): String => {
+    // Translate the country name from the selected search history into country code.
     const translatedCountryCodeIndex = countryCodes.findIndex(
       (countryCode) =>
         countryName.toLocaleLowerCase() === countryCode.name.toLocaleLowerCase()
@@ -53,7 +53,8 @@ export default function SearchHistory({
     return "failed";
   };
 
-  const selectSearchHistoryIndex = (id: string) => {
+  const selectSearchHistory = (id: string) => { 
+    // select search history will query the openweather api for weather again using the same city and country information.
     const selectedSearchHistoryIndex = WeatherInfoArr.findIndex(
       (weatherInfo) => weatherInfo.id === id
     );
@@ -156,7 +157,7 @@ export default function SearchHistory({
                     </StylishTypographyComponent>
                     <SearchHistoryIconButtonBox>
                       <IconButton
-                        onClick={() => selectSearchHistoryIndex(weatherInfo.id)}
+                        onClick={() => selectSearchHistory(weatherInfo.id)}
                         size="small"
                       >
                         <SearchIcon sx={{ color: "white" }} />
