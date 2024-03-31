@@ -7,9 +7,9 @@ interface Props {
 }
 
 const StylishPaper = styled(Paper)<PaperProps>({
-    width: '48%',
+    width:'40wh',
     background: "rgb(0,0,0,0.8)",
-    opacity:'0.6',
+    opacity:'0.8',
     alignItems:'left',
     padding:'16px',
     borderRadius:'40px',

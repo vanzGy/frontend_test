@@ -1,12 +1,14 @@
 import react, { useContext, useState } from "react";
-import { Grid, Typography, Paper, Box } from "@mui/material";
+import { Grid, Typography, Box, Switch, FormControlLabel } from "@mui/material";
 import SearchBarComponent from "./searchBar/SearchBarComponent";
 import StylishPaperComponent from "./component/StylishPaperComponent";
 import WeatherContent from "./component/weatherContent/WeatherContent";
 import SearchHistory from "./component/searchHistory/SearchHistory";
 import bgLight from './theme/img/bgLight.png'
+import bgDark from './theme/img/bg-dark.png'
 import "./App.css";
 import { ErrorContext } from "./ErrorProvider";
+import { ThemeContext } from "./theme/ThemeProvider";
 
 export interface WeatherInfo {
   id: string,
@@ -24,20 +26,14 @@ export default function Main() {
   const [weatherInfoTable, setWeatherInfoTable] = useState<WeatherInfo[]>([]);
   const [selectedWeatherInfoTableIndex, setSelectedWeatherInfoTableIndex] = useState<number>(-1);
   const {errMsg, errState} =useContext(ErrorContext)
+  const {isDarkTheme} = useContext(ThemeContext);
+
   return (
-    <Grid container sx={{ paddingTop:'16px', minHeight:'100vh',width:'100vw',backgroundPosition: "center", alignContent: "center", backgroundRepeat:'repeat-x', backgroundImage: `url('${bgLight}')`}} direction="column" >
-      
-        {/* <Typography
-          sx={{
-            color: "black",
-            opacity: 2,
-            fontWeight: "bold",
-            fontSize: "24px",
-          }}
-        >
-          Today's Weather
-        </Typography> */}
-        <SearchBarComponent WeatherInfoArr={weatherInfoTable} setWeatherInfoArr={setWeatherInfoTable} setSelectedWeatherInfoTableIndex={setSelectedWeatherInfoTableIndex}/>
+    <Grid container sx={{ paddingTop:'16px', minHeight:'100vh',width:'100vw',backgroundPosition: "center", alignContent: "center", backgroundRepeat:'repeat-x', backgroundImage: `url('${isDarkTheme? bgDark:bgLight }')`}} direction="column" >
+
+      <SearchBarComponent WeatherInfoArr={weatherInfoTable} setWeatherInfoArr={setWeatherInfoTable} setSelectedWeatherInfoTableIndex={setSelectedWeatherInfoTableIndex}/>
+     
+       
         <Box
         sx={{
           display: errState ? "flex" : "none",

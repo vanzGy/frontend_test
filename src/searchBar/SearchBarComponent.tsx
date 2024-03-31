@@ -1,6 +1,14 @@
 import react, { useContext, useState } from "react";
 import _ from "lodash";
-import { Grid, Box, TextField, IconButton, Typography } from "@mui/material";
+import {
+  Grid,
+  Box,
+  TextField,
+  IconButton,
+  Typography,
+  FormControlLabel,
+  Switch,
+} from "@mui/material";
 import { ThemeContext } from "../theme/ThemeProvider";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
@@ -26,27 +34,31 @@ export default function SearchBarComponent({
 }: SearchBarComponentPropsInterface) {
   const [searchCountry, setSearchCountry] = useState<string>("");
   const [searchCity, setSearchCity] = useState<string>("");
+  const { isDarkTheme, toggleTheme } = useContext(ThemeContext);
+  const returnThemeLabel = () => {
+    if (isDarkTheme) {
+      return "Dark";
+    }
+    return "Light";
+  };
   // const [errMsg, setErrMsg] = useState<String>("");
   // const [errState, setErrState] = useState<Boolean>(false);
-  const {setErrorMessage, changeErrorState} =useContext(ErrorContext)
+  const { setErrorMessage, changeErrorState } = useContext(ErrorContext);
 
   const returnErrMsg = (errMsg: string = ""): string => {
-  
-      if (searchCountry.length === 0 && searchCity.length === 0) {
-        return "Both Country and City text field are empty.";
-      }
-      if (searchCountry.length === 0) {
-        return "Country text field is empty.";
-      }
-      if (searchCity.length === 0) {
-        return "City text field is empty.";
-      }
-      if(errMsg.length > 0) {
-        return errMsg;
-      }
-      return "";
-    
-    
+    if (searchCountry.length === 0 && searchCity.length === 0) {
+      return "Both Country and City text field are empty.";
+    }
+    if (searchCountry.length === 0) {
+      return "Country text field is empty.";
+    }
+    if (searchCity.length === 0) {
+      return "City text field is empty.";
+    }
+    if (errMsg.length > 0) {
+      return errMsg;
+    }
+    return "";
   };
 
   const returnCountryCode = (countryName: string): string => {
@@ -67,8 +79,8 @@ export default function SearchBarComponent({
           height: "inherit",
           justifyContent: "center",
           width: "100%",
-          marginBottom:'16px',
-          paddingLeft:'34px'
+          marginBottom: "16px",
+          paddingLeft: "34px",
         }}
         direction="row"
       >
@@ -78,16 +90,16 @@ export default function SearchBarComponent({
           variant="filled"
           sx={{
             height: "10%",
-            width: "40%",
-            paddingRight:'8px',
-            input:{
-              color:'white',
-              borderRadius:'10px',
-              backgroundColor:"rgb(0,0,0,0.6)",
+            width: "34%",
+            paddingRight: "8px",
+            input: {
+              color: "white",
+              borderRadius: "10px",
+              backgroundColor: "rgb(0,0,0,0.6)",
             },
-            label:{
-              color:'white',
-            }
+            label: {
+              color: "white",
+            },
           }}
           fullWidth
           value={searchCountry}
@@ -104,21 +116,20 @@ export default function SearchBarComponent({
           variant="filled"
           sx={{
             height: "10%",
-            width: "40%",
-            paddingRight:'8px',
-            borderStyle:'none',
+            width: "34%",
+            paddingRight: "8px",
+            borderStyle: "none",
 
-            color:'white',
-            input:{
-              color:'white',
-              borderRadius:'10px',
-              backgroundColor:"rgb(0,0,0,0.6)",
+            color: "white",
+            input: {
+              color: "white",
+              borderRadius: "10px",
+              backgroundColor: "rgb(0,0,0,0.6)",
             },
-            label:{
-              color:'white',
-            }
+            label: {
+              color: "white",
+            },
           }}
-          
           color="primary"
           onChange={(e) => {
             const searchCityText = e.target.value;
@@ -143,7 +154,6 @@ export default function SearchBarComponent({
                   .then((result) => {
                     console.log("result", result);
                     if (result.cod !== 200) {
-                      
                       const errorMsg = returnErrMsg(result.message);
                       changeErrorState(true);
                       setErrorMessage(errorMsg);
@@ -152,7 +162,8 @@ export default function SearchBarComponent({
                       const countryName = result.sys.country;
 
                       const { description, main } = result.weather[0];
-                      const { temp_min, temp_max, humidity, temp } = result.main;
+                      const { temp_min, temp_max, humidity, temp } =
+                        result.main;
 
                       const timeStamp = result.dt;
                       const updatedWeatherInfo = {
@@ -175,7 +186,7 @@ export default function SearchBarComponent({
                         updatedWeatherInfoArr.length - 1
                       );
                       changeErrorState(false);
-                      setErrorMessage('');
+                      setErrorMessage("");
                     }
                   })
                   .catch((err: Error) => {
@@ -203,6 +214,16 @@ export default function SearchBarComponent({
           >
             <ClearIcon />
           </IconButton>
+          <FormControlLabel
+            control={
+              <Switch
+                onChange={() => {
+                  toggleTheme();
+                }}
+              />
+            }
+            label={returnThemeLabel()}
+          />
         </Grid>
       </Grid>
     </Grid>

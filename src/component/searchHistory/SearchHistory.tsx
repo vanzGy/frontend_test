@@ -1,7 +1,6 @@
 import react, { useContext } from "react";
 import {
   Grid,
-  Typography,
   Table,
   TableBody,
   TableCell,
@@ -17,7 +16,9 @@ import countryCodes from "../../helpers/countryCode.json";
 import openWeatherQuery from "../../helpers/openWeatherQuery";
 import { StylishTypographyComponent } from "../StylishTypography";
 import { ErrorContext } from "../../ErrorProvider";
-
+import {SearchHistoryIconButtonBox} from './SearchHistoryIconButtonBox'
+import { SearchHistoryBodyGrid } from "./SearchHistoryBodyGrid";
+import { SearchHistoryRowGrid } from "./SearchHistoryRowGrid";
 interface SearchHistoryPropsInterface {
   WeatherInfoArr: Array<WeatherInfo>;
   setWeatherInfoArr: react.Dispatch<react.SetStateAction<WeatherInfo[]>>;
@@ -96,16 +97,9 @@ export default function SearchHistory({
   };
 
   return (
-    <Grid
+    <SearchHistoryBodyGrid
       container
       direction="row"
-      sx={{
-        margin: "8px",
-        paddingLeft: "8px",
-        paddingRight: "8px",
-        backgroundColor: "rgb(0,0,0,0.8)",
-        borderRadius: 4,
-      }}
     >
       <StylishTypographyComponent sx={{ padding: "16px" }}>
         Search History
@@ -125,16 +119,9 @@ export default function SearchHistory({
                   borderStyle: "none",
                 }}
               >
-                <Grid
+                <SearchHistoryRowGrid
                   container
                   direction="row"
-                  sx={{
-                    background: "rgb(0,0,0)",
-                    borderRadius: 4,
-                    outline: "1px solid",
-                    paddingBottom: "8px",
-                    height: "120%",
-                  }}
                 >
                   <Grid
                     container
@@ -167,48 +154,25 @@ export default function SearchHistory({
                     >
                       {convertNumberToTime(weatherInfo.time)}
                     </StylishTypographyComponent>
-                    <Box
-                      sx={{
-                        borderRadius: "50%",
-                        borderStyle: "solid",
-                        borderColor: "white",
-                        marginRight:'8px'
-                      }}
-                    >
+                    <SearchHistoryIconButtonBox>
                       <IconButton
                         onClick={() => selectSearchHistoryIndex(weatherInfo.id)}
-                        sx={{
-                          borderRadius: "5px",
-                          borderStyle: "solid",
-                          borderColor: "white",
-                        }}
                         size="small"
                       >
                         <SearchIcon sx={{ color: "white" }} />
                       </IconButton>
-                    </Box>
-                    <Box
-                      sx={{
-                        borderRadius: "50%",
-                        borderStyle: "solid",
-                        borderColor: "white",
-                        marginRight:'8px'
-                      }}
+                    </SearchHistoryIconButtonBox>
+                    <SearchHistoryIconButtonBox
                     >
                       <IconButton
                         onClick={() => removeSearchHistory(weatherInfo.id)}
-                        sx={{
-                          borderRadius: "50%",
-                          borderStyle: "solid",
-                          borderColor: "grey",
-                        }}
                         size="small"
                       >
                         <ClearIcon sx={{ color: "white" }} />
                       </IconButton>
-                    </Box>
+                    </SearchHistoryIconButtonBox>
                   </Grid>
-                </Grid>
+                </SearchHistoryRowGrid>
               </TableCell>
               {/* <TableCell>
                 
@@ -227,6 +191,6 @@ export default function SearchHistory({
         <StylishTypographyComponent>No Record</StylishTypographyComponent>
         </Grid>
       }
-    </Grid>
+    </SearchHistoryBodyGrid>
   );
 }
