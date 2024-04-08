@@ -1,10 +1,17 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project implement material UI library for the react component design.
 
 ## Available Scripts
 
 In the project directory, you can run:
+
+### `npm i`
+
+Install npm packages that are listed in the package.json
+
+noted: If npm i failed, try run `npm i --f` to install npm packages
 
 ### `npm start`
 
